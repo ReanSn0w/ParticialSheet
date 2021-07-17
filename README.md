@@ -22,6 +22,6 @@ struct ParticialSheetExample: View {
 }
 ```
 
-Данный пакет основан на библиотеке ![FittedSheet](https://github.com/gordontucker/FittedSheets)
+Данный пакет основан на библиотеке [FittedSheet](https://github.com/gordontucker/FittedSheets)
 
 Лицензия MIT
