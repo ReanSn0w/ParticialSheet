@@ -4,6 +4,7 @@
 
 **Пример использования**  
 
+**Particial Sheet**
 ```swift
 import SwiftUI
 import ParticialSheet
@@ -17,6 +18,22 @@ struct ParticialSheetExample: View {
         }
         .particialSheet(isPresented: $opened, sizes: [.fixed(100), .marginFromTop(150)]) {
             Text("Particial Sheet")
+        }
+    }
+}
+```
+
+**Inline Sheet**
+```
+struct InlineSheetExample: View {
+    @State var opened: Bool = false
+    
+    var body: some View {
+        Button(action: { self.opened.toggle() }) {
+            Text("Open")
+        }
+        .inlineSheet(isPresented: $opened, sizes: [.fixed(100), .marginFromTop(150)]) {
+            Text("Inline Sheet")
         }
     }
 }
