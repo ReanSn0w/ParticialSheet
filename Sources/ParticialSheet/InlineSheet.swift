@@ -39,6 +39,8 @@ struct InlineSheetExample_Previews: PreviewProvider {
 // MARK: - базовая реализация
 
 struct InlineSheet<Item, Content>: UIViewControllerRepresentable where Item: Identifiable, Content: View {
+    private var pass: SheetViewControllerEnvPass = .init()
+    
     @Binding var item: Item?
     var content: (Item) -> Content
     var sizes: [SheetSize]
@@ -68,7 +70,7 @@ struct InlineSheet<Item, Content>: UIViewControllerRepresentable where Item: Ide
         context.coordinator.sheet = nil
         
         if let root = uiViewController.parent, let item = item {
-            let host = UIHostingController(rootView: content(item))
+            let host = UIHostingController(rootView: content(item).environment(\.sheetViewController, pass))
             let sheet = SheetViewController(
                 controller: host,
                 sizes: sizes,
@@ -83,6 +85,7 @@ struct InlineSheet<Item, Content>: UIViewControllerRepresentable where Item: Ide
                     horizontalPadding: options?.horizontalPadding,
                     maxWidth: options?.maxWidth))
             
+            pass.set(sheet: sheet)
             modificate(sheet)
             
             sheet.didDismiss = { _ in

@@ -32,6 +32,8 @@ struct ParticialSheetExample_Previews: PreviewProvider {
 // MARK: - Базовая реализация
 
 struct ParticialSheet<Item, Content>: UIViewControllerRepresentable where Item: Identifiable, Content: View {
+    private var pass: SheetViewControllerEnvPass = .init()
+    
     @Binding var item: Item?
     var sizes: [SheetSize]
     var options: SheetOptions?
@@ -61,12 +63,13 @@ struct ParticialSheet<Item, Content>: UIViewControllerRepresentable where Item: 
         context.coordinator.sheet = nil
         
         if let item = item {
-            let hostingController = UIHostingController(rootView: contentBuilder(item))
+            let hostingController = UIHostingController(rootView: contentBuilder(item).environment(\.sheetViewController, pass))
             let sheetController = SheetViewController(
                 controller: hostingController,
                 sizes: sizes,
                 options: options)
             
+            pass.set(sheet: sheetController)
             modificate(sheetController)
             
             sheetController.didDismiss = { _ in
