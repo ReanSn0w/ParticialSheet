@@ -8,7 +8,30 @@
 import SwiftUI
 import FittedSheets
 
-public struct ParticialSheet<Item, Content>: UIViewControllerRepresentable where Item: Identifiable, Content: View {
+// MARK: - Пример использования
+
+struct ParticialSheetExample: View {
+    @State var opened: Bool = false
+    
+    var body: some View {
+        Button(action: { self.opened.toggle() }) {
+            Text("Open")
+        }
+        .particialSheet(isPresented: $opened, sizes: [.fixed(100), .marginFromTop(150)]) {
+            Text("Particial Sheet")
+        }
+    }
+}
+
+struct ParticialSheetExample_Previews: PreviewProvider {
+    static var previews: some View {
+        ParticialSheetExample()
+    }
+}
+
+// MARK: - Базовая реализация
+
+struct ParticialSheet<Item, Content>: UIViewControllerRepresentable where Item: Identifiable, Content: View {
     @Binding var item: Item?
     var sizes: [SheetSize]
     var options: SheetOptions?
@@ -29,11 +52,11 @@ public struct ParticialSheet<Item, Content>: UIViewControllerRepresentable where
         self.contentBuilder = content
     }
     
-    public func makeUIViewController(context: Context) -> UIViewController {
+    func makeUIViewController(context: Context) -> UIViewController {
         UIViewController()
     }
     
-    public func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
+    func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
         if let item = item {
             let hostingController = UIHostingController(rootView: contentBuilder(item))
             let sheetController = SheetViewController(
@@ -54,12 +77,14 @@ public struct ParticialSheet<Item, Content>: UIViewControllerRepresentable where
     }
 }
 
+// MARK: - Расширение для привязки к логическим значениям
+
 extension ParticialSheet where Item == OpenerHack {
     init(
         isPresented: Binding<Bool>,
-        sizes: [SheetSize] = [.intrinsic],
-        options: SheetOptions? = nil,
-        modificate: @escaping (SheetViewController) -> Void = { _ in },
+        sizes: [SheetSize],
+        options: SheetOptions?,
+        modificate: @escaping (SheetViewController) -> Void,
         @ViewBuilder content: @escaping () -> Content
     ) {
         self._item = .init(
@@ -79,5 +104,3 @@ extension ParticialSheet where Item == OpenerHack {
         self.contentBuilder = { _ in return content() }
     }
 }
-
-class OpenerHack: Identifiable {}
