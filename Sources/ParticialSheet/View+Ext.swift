@@ -13,6 +13,7 @@ public typealias SheetOptions = FittedSheets.SheetOptions
 
 /// OpenerHack - класс, необходимый для добавления возможности создания view с привязкой с логической переменной
 class OpenerHack: Identifiable {}
+
 extension View {
     public func particialSheet<Item: Identifiable, Content: View>(
         item: Binding<Item?>,
@@ -44,5 +45,38 @@ extension View {
                 options: options,
                 modificate: modificate,
                 content: content))
+    }
+    
+    public func inlineSheet<Item: Identifiable, Content: View>(
+        item: Binding<Item?>,
+        sizes: [SheetSize] = [.intrinsic],
+        options: SheetOptions? = nil,
+        modificate: @escaping (SheetViewController) -> Void = { _ in },
+        @ViewBuilder content: @escaping (Item) -> Content
+    ) -> some View {
+        self.background(
+            InlineSheet(
+                item: item,
+                sizes: sizes,
+                options: options,
+                modificate: modificate,
+                content: content))
+    }
+    
+    public func inlineSheet<Content: View>(
+        isPresented: Binding<Bool>,
+        sizes: [SheetSize] = [.intrinsic],
+        options: SheetOptions? = nil,
+        modificate: @escaping (SheetViewController) -> Void = { _ in },
+        @ViewBuilder content: @escaping () -> Content
+    ) -> some View {
+        self
+            .background(
+                InlineSheet(
+                    isPresented: isPresented,
+                    sizes: sizes,
+                    options: options,
+                    modificate: modificate,
+                    content: content))
     }
 }
