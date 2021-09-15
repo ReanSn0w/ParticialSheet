@@ -57,6 +57,9 @@ struct ParticialSheet<Item, Content>: UIViewControllerRepresentable where Item: 
     }
     
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
+        context.coordinator.sheet?.attemptDismiss(animated: true)
+        context.coordinator.sheet = nil
+        
         if let item = item {
             let hostingController = UIHostingController(rootView: contentBuilder(item))
             let sheetController = SheetViewController(
@@ -73,6 +76,20 @@ struct ParticialSheet<Item, Content>: UIViewControllerRepresentable where Item: 
             }
             
             uiViewController.present(sheetController, animated: true, completion: nil)
+        }
+    }
+    
+    func makeCoordinator() -> Coordinator {
+        .init(parent: self)
+    }
+    
+    class Coordinator: NSObject {
+        var parent: ParticialSheet
+        var sheet: SheetViewController?
+        
+        init(parent: ParticialSheet) {
+            self.parent = parent
+            self.sheet = nil
         }
     }
 }
