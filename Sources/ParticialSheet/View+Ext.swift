@@ -8,6 +8,11 @@
 import SwiftUI
 import FittedSheets
 
+/// Алиас для настроек из пакета FittedSheets. Нужен лишь для  уменьшения числа импортов в файле конечного проекта
+public typealias SheetOptions = FittedSheets.SheetOptions
+
+/// OpenerHack - класс, необходимый для добавления возможности создания view с привязкой с логической переменной
+class OpenerHack: Identifiable {}
 extension View {
     public func particialSheet<Item: Identifiable, Content: View>(
         item: Binding<Item?>,
