@@ -69,33 +69,35 @@ struct InlineSheet<Item, Content>: UIViewControllerRepresentable where Item: Ide
         context.coordinator.sheet?.attemptDismiss(animated: true)
         context.coordinator.sheet = nil
         
-        if let root = uiViewController.parent, let item = item {
-            let host = UIHostingController(rootView: content(item).environment(\.sheetViewController, pass))
-            let sheet = SheetViewController(
-                controller: host,
-                sizes: sizes,
-                options: .init(
-                    pullBarHeight: options?.pullBarHeight,
-                    presentingViewCornerRadius: options?.presentingViewCornerRadius,
-                    shouldExtendBackground: options?.shouldExtendBackground,
-                    setIntrinsicHeightOnNavigationControllers: options?.setIntrinsicHeightOnNavigationControllers,
-                    useFullScreenMode: options?.useFullScreenMode,
-                    shrinkPresentingViewController: options?.shrinkPresentingViewController,
-                    useInlineMode: true,
-                    horizontalPadding: options?.horizontalPadding,
-                    maxWidth: options?.maxWidth))
-            
-            pass.set(sheet: sheet)
-            modificate(sheet)
-            
-            sheet.didDismiss = { _ in
-                DispatchQueue.main.async {
-                    self.item = nil
+        DispatchQueue.main.async {
+            if let root = uiViewController.parent, let item = item {
+                let host = UIHostingController(rootView: content(item).environment(\.sheetViewController, pass))
+                let sheet = SheetViewController(
+                    controller: host,
+                    sizes: sizes,
+                    options: .init(
+                        pullBarHeight: options?.pullBarHeight,
+                        presentingViewCornerRadius: options?.presentingViewCornerRadius,
+                        shouldExtendBackground: options?.shouldExtendBackground,
+                        setIntrinsicHeightOnNavigationControllers: options?.setIntrinsicHeightOnNavigationControllers,
+                        useFullScreenMode: options?.useFullScreenMode,
+                        shrinkPresentingViewController: options?.shrinkPresentingViewController,
+                        useInlineMode: true,
+                        horizontalPadding: options?.horizontalPadding,
+                        maxWidth: options?.maxWidth))
+                
+                pass.set(sheet: sheet)
+                modificate(sheet)
+                
+                sheet.didDismiss = { _ in
+                    DispatchQueue.main.async {
+                        self.item = nil
+                    }
                 }
+                
+                context.coordinator.sheet = sheet
+                sheet.animateIn(to: root.view, in: root)
             }
-            
-            context.coordinator.sheet = sheet
-            sheet.animateIn(to: root.view, in: root)
         }
     }
     
