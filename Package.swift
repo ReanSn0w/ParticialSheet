@@ -10,7 +10,7 @@ let package = Package(
         .library(name: "ParticialSheet", targets: ["ParticialSheet"]),
     ],
     dependencies: [
-        .package(name: "FittedSheets", url: "https://github.com/gordontucker/FittedSheets", ._exactItem("2.4.1"))
+        .package(name: "FittedSheets", url: "https://github.com/gordontucker/FittedSheets", from: "2.4.1")
     ],
     targets: [
         .target(name: "ParticialSheet", dependencies: ["FittedSheets"]),
