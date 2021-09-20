@@ -91,10 +91,14 @@ struct InlineSheet<Item, Content>: UIViewControllerRepresentable where Item: Ide
                 pass.set(sheet: sheet)
                 modificate(sheet)
                 
-                sheet.didDismiss = { _ in
+                let dismissAction = sheet.didDismiss
+                
+                sheet.didDismiss = { svc in
                     DispatchQueue.main.async {
                         self.item = nil
                     }
+                    
+                    dismissAction?(svc)
                 }
                 
                 context.coordinator.sheet = sheet

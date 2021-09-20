@@ -73,11 +73,15 @@ struct ParticialSheet<Item, Content>: UIViewControllerRepresentable where Item: 
                 
             pass.set(sheet: sheetController)
             modificate(sheetController)
-                
-            sheetController.didDismiss = { _ in
+            
+            let dismissAction = sheetController.didDismiss
+            
+            sheetController.didDismiss = { svc in
                 DispatchQueue.main.async {
                     self.item = nil
                 }
+                
+                dismissAction?(svc)
             }
                 
             uiViewController.present(sheetController, animated: true, completion: nil)
