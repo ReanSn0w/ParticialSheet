@@ -59,28 +59,28 @@ struct ParticialSheet<Item, Content>: UIViewControllerRepresentable where Item: 
     }
     
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
+        guard let item = self.item, context.coordinator.checkItem(new: item) else { return }
+        
         context.coordinator.sheet?.attemptDismiss(animated: true)
         context.coordinator.sheet = nil
         
         DispatchQueue.main.async {
-            if let item = item {
-                let hostingController = UIHostingController(rootView: contentBuilder(item).environment(\.sheetViewController, pass))
-                let sheetController = SheetViewController(
-                    controller: hostingController,
-                    sizes: sizes,
-                    options: options)
+            let hostingController = UIHostingController(rootView: contentBuilder(item).environment(\.sheetViewController, pass))
+            let sheetController = SheetViewController(
+                controller: hostingController,
+                sizes: sizes,
+                options: options)
                 
-                pass.set(sheet: sheetController)
-                modificate(sheetController)
+            pass.set(sheet: sheetController)
+            modificate(sheetController)
                 
-                sheetController.didDismiss = { _ in
-                    DispatchQueue.main.async {
-                        self.item = nil
-                    }
+            sheetController.didDismiss = { _ in
+                DispatchQueue.main.async {
+                    self.item = nil
                 }
-                
-                uiViewController.present(sheetController, animated: true, completion: nil)
             }
+                
+            uiViewController.present(sheetController, animated: true, completion: nil)
         }
     }
     
@@ -91,10 +91,20 @@ struct ParticialSheet<Item, Content>: UIViewControllerRepresentable where Item: 
     class Coordinator: NSObject {
         var parent: ParticialSheet
         var sheet: SheetViewController?
+        var item: Item?
         
         init(parent: ParticialSheet) {
             self.parent = parent
             self.sheet = nil
+            self.item = nil
+        }
+        
+        func checkItem(new item: Item?) -> Bool {
+            guard self.item?.id != item?.id else { return false }
+            
+            self.item = item
+            
+            return true
         }
     }
 }

@@ -66,11 +66,13 @@ struct InlineSheet<Item, Content>: UIViewControllerRepresentable where Item: Ide
     }
     
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
+        guard let item = self.item, context.coordinator.checkItem(new: item) else { return }
+        
         context.coordinator.sheet?.attemptDismiss(animated: true)
         context.coordinator.sheet = nil
         
         DispatchQueue.main.async {
-            if let root = uiViewController.parent, let item = item {
+            if let root = uiViewController.parent {
                 let host = UIHostingController(rootView: content(item).environment(\.sheetViewController, pass))
                 let sheet = SheetViewController(
                     controller: host,
@@ -108,10 +110,20 @@ struct InlineSheet<Item, Content>: UIViewControllerRepresentable where Item: Ide
     class Coordinator: NSObject {
         var parent: InlineSheet
         var sheet: SheetViewController?
+        var item: Item?
         
         init(parent: InlineSheet) {
             self.parent = parent
             self.sheet = nil
+            self.item = nil
+        }
+        
+        func checkItem(new item: Item?) -> Bool {
+            guard self.item?.id != item?.id else { return false }
+            
+            self.item = item
+            
+            return true
         }
     }
 }
