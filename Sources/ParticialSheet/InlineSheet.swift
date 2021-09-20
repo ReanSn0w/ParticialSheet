@@ -46,18 +46,21 @@ struct InlineSheet<Item, Content>: UIViewControllerRepresentable where Item: Ide
     var sizes: [SheetSize]
     var options: SheetOptions?
     var modificate: (SheetViewController) -> Void
+    var onValue: ((Item?) -> Void)?
     
     init(
         item: Binding<Item?>,
         sizes: [SheetSize],
         options: SheetOptions?,
         modificate: @escaping (SheetViewController) -> Void = { _ in },
+        onValue: ((Item?) -> Void)?,
         @ViewBuilder content: @escaping (Item) -> Content
     ) {
         self._item = item
         self.sizes = sizes
         self.options = options
         self.modificate = modificate
+        self.onValue = onValue
         self.content = content
     }
     
@@ -66,6 +69,8 @@ struct InlineSheet<Item, Content>: UIViewControllerRepresentable where Item: Ide
     }
     
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
+        self.onValue?(self.item)
+        
         guard let item = self.item, context.coordinator.checkItem(new: item) else { return }
         
         context.coordinator.sheet?.attemptDismiss(animated: true)
@@ -140,6 +145,7 @@ extension InlineSheet where Item == OpenerHack {
         sizes: [SheetSize],
         options: SheetOptions?,
         modificate: @escaping (SheetViewController) -> Void,
+        onValue: (() -> Void)?,
         @ViewBuilder content: @escaping () -> Content
     ) {
         self._item = .init(
@@ -156,6 +162,7 @@ extension InlineSheet where Item == OpenerHack {
         self.sizes = sizes
         self.options = options
         self.modificate = modificate
+        self.onValue = { _ in onValue?() }
         self.content = { _ in return content() }
     }
 }

@@ -52,6 +52,7 @@ extension View {
         sizes: [SheetSize] = [.intrinsic],
         options: SheetOptions? = nil,
         modificate: @escaping (SheetViewController) -> Void = { _ in },
+        onValue: ((Item?) -> Void)? = nil,
         @ViewBuilder content: @escaping (Item) -> Content
     ) -> some View {
         self.background(
@@ -60,6 +61,7 @@ extension View {
                 sizes: sizes,
                 options: options,
                 modificate: modificate,
+                onValue: onValue,
                 content: content))
     }
     
@@ -68,6 +70,7 @@ extension View {
         sizes: [SheetSize] = [.intrinsic],
         options: SheetOptions? = nil,
         modificate: @escaping (SheetViewController) -> Void = { _ in },
+        onValue: (() -> Void)? = nil,
         @ViewBuilder content: @escaping () -> Content
     ) -> some View {
         self
@@ -77,6 +80,7 @@ extension View {
                     sizes: sizes,
                     options: options,
                     modificate: modificate,
+                    onValue: onValue,
                     content: content))
     }
 }
